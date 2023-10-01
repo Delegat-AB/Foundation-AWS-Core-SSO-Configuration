@@ -269,9 +269,6 @@ def process_scripts(scripts, repo_name, params, dry_run, verbose):
     printc(LIGHT_BLUE, "")
 
     for script in scripts:
-        name = script['name']
-        config_dir = script['config-dir'].rstrip('/')
-
         regions = script.get('regions', '{main-region}')
         regions = dereference(regions, params)
         if isinstance(regions, str):
@@ -279,16 +276,52 @@ def process_scripts(scripts, repo_name, params, dry_run, verbose):
 
         account_str = script.get('account', '{admin-account}')
         account_id = dereference(account_str, params)
-        #printc(GRAY, account_id)
+        if verbose:
+            printc(GRAY, f"account_id:  {account_id}")
 
         profile = script.get('profile', 'admin-account')
         profile = get_account_data_from_toml(profile, 'profile')
-        #printc(GRAY, profile)
+        if verbose:
+            printc(GRAY, f"profile:     {profile}")
+
+        if verbose:
+            printc(GRAY, f"script:      {script}")
+
+        name = script['name']
 
         our_params = script_parameters_to_dictionary(name, params, repo_name)
-        printc(GRAY, our_params)
+        if verbose:
+            printc(GRAY, f"our_params:  {our_params}")
 
-        group_prefix = our_params.get('group-prefix', '')
+        cmd = ['./' + name]
+
+        if dry_run:
+            cmd.append('--dry-run')
+
+        for k, v in script.get('args', []):
+            cmd.append(k)
+            
+            if isinstance(v, str) and v.endswith('.toml'):
+                try:
+                    # Read the TOML file
+                    with open(v, 'r') as toml_file:
+                        toml_data = toml.load(toml_file)
+
+                    # Convert the TOML data to JSON
+                    json_string = json.dumps(toml_data)
+
+                except FileNotFoundError:
+                    print(f"The file {v} does not exist.")
+                except Exception as e:
+                    print(f"An error occurred: {e}")
+                cmd.append(json_string)
+            
+            else:
+                cmd.append(dereference(v, our_params))
+
+        if verbose:
+            printc(GRAY, '')
+            printc(GRAY, f"cmd: {cmd}")
 
         for region in regions:
             printc(LIGHT_BLUE, "")
@@ -300,7 +333,10 @@ def process_scripts(scripts, repo_name, params, dry_run, verbose):
             printc(LIGHT_BLUE, "------------------------------------------------")
             printc(LIGHT_BLUE, "")
 
-            printc(YELLOW, f'./{name} --group-prefix "{group_prefix}" --config-dir "{config_dir}"')
+            try:
+                subprocess.run(cmd, check=True)
+            except subprocess.CalledProcessError as e:
+                print(f"Command '{e.cmd}' returned non-zero exit status {e.returncode}.")
 
 
 

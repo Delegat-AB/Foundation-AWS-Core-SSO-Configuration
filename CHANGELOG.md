@@ -1,4 +1,5 @@
 # Change Log
+    * All three scripts now support additional args to run under the Delegat Installer.
 
 ## v1.1.1
     * `sync-groups` now supports `--dry-run`, `--group-prefix`, and `--config-dir`.
