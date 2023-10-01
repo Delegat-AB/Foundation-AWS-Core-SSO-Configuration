@@ -1,0 +1,21 @@
+# Deployment configuration
+
+repo-name    = "Foundation-AWS-Core-SSO-Configuration"
+part-of      = 'foundation'
+
+[[Script]]
+name         = 'sync-groups'
+config-dir   = '../Delegat-Install/apps/foundation/sso-config/sso_groups'
+
+
+# [[Script]]
+# name         = 'sync-permission-sets'
+# profile      = "admin-account"
+# account      = '{admin-account}'
+# regions      = '{main-region}'
+
+# [[Script]]
+# name         = 'sync-accounts'
+# profile      = "admin-account"
+# account      = '{admin-account}'
+# regions      = '{main-region}'
