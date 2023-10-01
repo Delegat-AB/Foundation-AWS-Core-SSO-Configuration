@@ -1,4 +1,6 @@
 # Change Log
+
+## v1.1.2
     * All three scripts now support additional args to run under the Delegat Installer.
 
 ## v1.1.1
