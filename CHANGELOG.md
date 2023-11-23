@@ -1,5 +1,8 @@
 # Change Log
 
+## v1.1.3
+    * Updates triggered by new version of AWS CLI: --no-paginate added where required.
+
 ## v1.1.2
     * All three scripts now support additional args to run under the Delegat Installer.
 
