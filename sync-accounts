@@ -1,9 +1,9 @@
 #!/bin/zsh -e
+
 RED="\e[31m"
 GREEN="\e[32m"
 YELLOW="\e[33m"
 ENDCOLOR="\e[0m"
-
 
 group_prefix=""
 config_dir=""
@@ -53,6 +53,8 @@ fi
 
 declare -A ACCOUNTS_MAP=() # Declare an associative array
 
+echo $accounts
+
 if [ -n "$accounts" ]; then
     # Convert the JSON string to a format that can be easily looked up
     account_ids=$(echo $accounts | jq -r 'to_entries[] | "\(.key)=\(.value.id)"')
@@ -99,7 +101,7 @@ get_permission_set_name() {
 
 echo
 echo -e ${YELLOW}Retrieving permission sets...${ENDCOLOR}
-permission_set_arns=$(aws sso-admin list-permission-sets --instance-arn $instance_arn --query 'PermissionSets[*]' --output text --no-paginate)
+permission_set_arns=$(aws sso-admin list-permission-sets --instance-arn $instance_arn --query 'PermissionSets[*]' --output text)
 # SSO_INSTANCE_PERMISSION_SET_ARNS maps from names to ARNs
 declare -A SSO_INSTANCE_PERMISSION_SET_ARNS=()     
 for permission_set_arn in $(echo $permission_set_arns)
@@ -204,12 +206,12 @@ do
             echo -e "${GREEN}Assigning $sso_group_name with $permission_set_name${ENDCOLOR}..."
             group_id=$(get_group_id $sso_group_name)
             if [ -z "$group_id" ] ; then
-                echo -e "${RED}ERROR: The SSO Group $1 can't be found. Aborting.${ENDCOLOR}"
+                echo -e "${RED}ERROR: The SSO Group '$sso_group_name' can't be found. Aborting.${ENDCOLOR}"
                 exit 1
             fi
             permission_set_arn=$(get_permission_set_arn $permission_set_name)
             if [ -z "$permission_set_arn" ] ; then
-                echo -e "${RED}ERROR: The SSO Permission Set $1 can't be found. Aborting.${ENDCOLOR}"
+                echo -e "${RED}ERROR: The SSO Permission Set '$permission_set_name' can't be found. Aborting.${ENDCOLOR}"
                 exit 1
             fi
 
