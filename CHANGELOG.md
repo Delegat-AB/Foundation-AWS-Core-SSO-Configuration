@@ -1,5 +1,8 @@
 # Change Log
 
+## v1.2.0
+    * Added `.python-version` file for pyenv.
+
 ## v1.1.3
     * Updates triggered by new version of AWS CLI: --no-paginate added where required.
 
