@@ -61,9 +61,31 @@ get_permission_set_name() {
     echo $permission_set_name
 }
 
+get_all_permission_sets() {
+    local next_token=""
+    local all_permission_sets=""
+
+    while true; do
+        if [ -z "$next_token" ]; then
+            result=$(aws sso-admin list-permission-sets --instance-arn $instance_arn --output json)
+        else
+            result=$(aws sso-admin list-permission-sets --instance-arn $instance_arn --output json --next-token $next_token)
+        fi
+
+        all_permission_sets="$all_permission_sets $(echo $result | jq -r '.PermissionSets[]')"
+        next_token=$(echo $result | jq -r '.NextToken')
+
+        if [ "$next_token" = "null" ]; then
+            break
+        fi
+    done
+
+    echo $all_permission_sets
+}
+
 echo
 echo -e ${YELLOW}Retrieving permission sets...${ENDCOLOR}
-permission_set_arns=$(aws sso-admin list-permission-sets --instance-arn $instance_arn --query 'PermissionSets[*]' --output text --no-paginate)
+permission_set_arns=$(get_all_permission_sets)
 declare -A PERMISSION_SET_ARNS=()
 for permission_set_arn in $(echo $permission_set_arns)
 do

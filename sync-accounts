@@ -53,8 +53,6 @@ fi
 
 declare -A ACCOUNTS_MAP=() # Declare an associative array
 
-echo $accounts
-
 if [ -n "$accounts" ]; then
     # Convert the JSON string to a format that can be easily looked up
     account_ids=$(echo $accounts | jq -r 'to_entries[] | "\(.key)=\(.value.id)"')
