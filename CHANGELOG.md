@@ -1,5 +1,8 @@
 # Change Log
 
+## v1.2.2
+    * Added paging to the permission set sync script.
+
 ## v1.2.1
     * Now using `#!/usr/bin/env zsh` for sync-accounts, sync-groups, and sync-permission-sets.
 
